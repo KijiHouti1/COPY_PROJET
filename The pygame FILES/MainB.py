@@ -22,8 +22,8 @@ def opt_menuA(text, opt, size, pos_x, pos_y, dist_sq):
     txt_size=msg.write(set_dict, pos_x*scale_w, pos_y*scale_h, text, color.WHITE,size)
     sqx= (pos_x-dist_sq)*scale_w        #point x du rect
     sqy= (pos_y-dist_sq)*scale_h        #point y du rect
-    obt_width= (txt_size[0]+(dist_sq*2))*scale_w    #longueur du rect
-    obt_height= (txt_size[1]+(dist_sq*2))*scale_h                           #hauteur du rect
+    obt_width= (txt_size[0]+((dist_sq*2)*scale_w))    #longueur du rect
+    obt_height= (txt_size[1]+((dist_sq*2)*scale_h))                        #hauteur du rect
     if(curr_pos==opt):      # numero d'option 
         if(press_dwn == 1):
             pygame.draw.rect(screen, color.RED2, (sqx,sqy,obt_width,obt_height))            
@@ -111,21 +111,21 @@ while done==False:
                 menu = 0xD0
                 action = 0
 
-    if menu == 0xA0:
-        if curr_pos  == 0:
+    if menu == 0xA0:            #Menu dans Jeu
+        if curr_pos  == 0:      #option : Choisir Jeu
             if(action==1):
                 menu = 0xA1
                 action = 0
-        elif curr_pos ==1:
+        elif curr_pos ==1:      #option : Reprendre Jeu
             if(action==1):
                 menu = 0xA2
                 action = 0
 
-    if menu == 0xA1:
-    	if curr_pos  == 0:
-            if(action==1):
-                #SEND ACTIVATE GAME
-
+    if menu == 0xA1:            #Menu : Choisir Jeu
+        if curr_pos  == 0:
+            if(action==1):              #SEND ACTIVATE GAME
+                
+            
     if counter_action == 1:
         menu=0
         counter_action = 0
@@ -139,27 +139,27 @@ while done==False:
 
     #______________ALL CODE TO DRAW SHOULD GO BELOW THIS COMMENT_________
     screen.fill(color.BLACK)
-    if menu == 0x00:
+    if menu == 0x00:        #Menu de base
         opt_menuA("Jeu", 0, 110, 450, 200, 20)
         opt_menuA("Options", 1, 110, 450, 400, 20)
         opt_menuA("Parametres avances", 2, 110, 450, 600, 20)
         opt_menuA("Quitter", 3, 110, 450, 800, 20)
         
-    if menu == 0xA0:        #Si on choisi Jeu
+    if menu == 0xA0:        #Menu : Jeu
         opt_menuA("Choisir Jeu", 0, 110, 400, 400, 20)
         opt_menuA("Reprendre Jeu", 1, 110, 400, 800, 20)
 
-    if menu == 0xA1:        #Si on choisi Jeu
-        opt_menuA("Gwent", 0, 50, 400, 400, 20)
-        opt_menuA("Blackjack", 1, 50, 400, 800, 20)
+    if menu == 0xA1:        #Menu : Choisir Jeu
+        opt_menuA("Gwent", 0, 50, 400, 400, 30)
+        opt_menuA("Blackjack", 1, 50, 400, 800, 30)
 
-    if menu == 0xA2:        #Si on choisi Jeu
+    if menu == 0xA2:        #Menu : Reprendre jeu
         if sauvegarde==0:
             opt_menuA("Aucune sauvegarde", 0, 50, 400, 400, 20)
         if sauvegarde==1:
             opt_menuA("Reprendre jeu", 1, 50, 400, 400, 20)
 
-    if menu == 0xB0:        #Si on choisi Options
+    if menu == 0xB0:        #Menu : Options
         opt_menuA("Son", 0, 50, 250, 500, 20)
         opt_menuA("Mute", 1, 50, 650, 500, 20)
         opt_menuA("Manette", 2, 50, 1050, 500, 20)
