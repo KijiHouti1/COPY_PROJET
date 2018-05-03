@@ -33,13 +33,10 @@ void BBB_turn_player(int dest);
 
 //------------------END SEGMENT--------------------------------//
 
-uint16_t    message[];
 uint16_t    MY_BUFFER_SIZE = 256;
-uint8_t     total;
-uint8_t     turn = 0;
-bool        BBB_INIT=true;
+bool        BBB_INIT=false;
 uint8_t     writeDummy[1]={0x55};
-uint8_t     readData[60];
+uint8_t     readData[60];       //grandeur du tableau de réception
 uint8_t     readDummy;
 uint8_t     i;
 
@@ -53,7 +50,6 @@ void main(void)
     SYSTEM_Initialize();
     SPI_Initialize();
     printf("intialisation complete\n\r");
-    total = 0;
     TMR1_StartTimer();
     //-----------------TODO-----------------------------//
     // while(BBB_INIT==false){
@@ -64,9 +60,9 @@ void main(void)
         //wait for RPID to lock ///
     // }
     while(1){
-    //routine_talk(BBB);
+    routine_talk(BBB);
     routine_talk(RPIA);
-    //routine_talk(RPIB);
+    routine_talk(RPIB);
     //routine_talk(RPIC);
     //routine_talk(RPID);
     }
@@ -89,17 +85,14 @@ int receiving(){
     for(i=0;i<readData[3];i++){
         readData[i+4]=SPI_Exchange8bit(0x55);
     }
-    /*
-    for(i=0;i<readData[3];i++){
-        printf("%c",readData[i+4]); 
-    }
-    */
     return (readData[2]);
 }
     
 void transmit(int dest){  
     int TrueLenght;
+    bool lock=false;
     identify(dest);
+    while(lock==false)lock=key_locking(0x6F,0xA6);    //Attend un 6F, Envoie un A6 --> PIC veut communiquer
     TrueLenght=readData[3]+4;
     for(i=0;i<TrueLenght;i++){
     readDummy = SPI_Exchange8bit(readData[i]);
@@ -142,7 +135,7 @@ void identify(int adress){
     IO_RB3_SetHigh();    //RPI2
     IO_RB4_SetHigh();    //RPI3
     IO_RB5_SetHigh();    //RPI4
-    __delay_ms(10);
+    __delay_ms(0.500);
     if (adress==BBB) IO_RB1_SetLow();    //BBB 
     if (adress==RPIA)IO_RB2_SetLow();    //RPIA 
     if (adress==RPIB)IO_RB3_SetLow();    //RPIB
@@ -166,7 +159,6 @@ void routine_talk(int adress){
             lock=false;
             type=receiving();               //receiving recoit la trame, traite le type ensuite
             if(type == 0xEE){               //RPI_MSG
-                while(lock==false) lock=key_locking(0x6F,0xA6);    //Attend un 6F, Envoie un A6 --> PIC veut communiquer
                 transmit(readData[1]);          //Transmission vers un destinateur particulier
             //**********************PAS TESTER********************//
             } else if(type == 0xDD){  //RPI_END TURN        
